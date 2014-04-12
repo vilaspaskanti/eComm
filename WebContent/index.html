@@ -1,0 +1,318 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>HTML5 Brain Vita</title>
+    <link rel="stylesheet" href="html5reset.css" type="text/css" />
+    <link rel="stylesheet" href="html5simple.css" type="text/css" />
+    <!--[if lt IE 9]>
+        <script src="html5.js"></script>
+    <![endif]-->
+
+    <script>
+    function check(target, event)
+    {
+       
+	  if(target.src.indexOf("blank.gif")>0)
+        {
+        //alert("else"); 
+       // alert(target.src.indexOf("blank.gif"));
+     
+        }
+        else
+        {
+           // alert("else 2");
+               	DragHandler(target, event);
+        }
+            
+    }
+    function getX(id)
+    {
+    
+       var x=id.substring(1,2);
+       //alert(x);
+       return parseInt(x);
+    }
+    
+     function getY(id)
+    {
+
+       var y=id.substring(2);
+       //alert(y);
+       return parseInt(y);    
+    }
+
+    function DragHandler(target, e) 
+	{
+        e.dataTransfer.setData('Text', target.id);
+       // alert(e.dataTransfer.getData('Text', target.id));
+    }
+
+    function DropHandler(target,e,d1,d2,c,flag) 
+	{
+       //target.appendChild(document.getElementById(id));
+       var dragid = e.dataTransfer.getData('Text');
+       //alert("d1"+d1+"d2"+d2);
+       var mid=(d1+d2)/2;
+        //alert("mid"+mid);
+       var midid=null;
+       //alert(mid);
+       
+         if(flag=="x")
+       {
+       		
+       		midid="i"+mid+c;
+       		//alert(midid);
+       }
+       else
+       {
+       		midid="i"+c+mid;
+       		//alert(midid);
+       }
+       //alert(document.getElementById("d"+mid+c).getElementsByTagName("img")[0].src);
+      //alert(target.id);
+      //alert(document.getElementById(target.id).getElementsByTagName("img")[0].src.indexOf("blank.gif"));
+      if(document.getElementById(target.id).getElementsByTagName("img")[0].src.indexOf("blank.gif")>0)
+       {
+       		
+       	   if(document.getElementById(midid).src.indexOf("blank.gif")<0)
+       	   {
+       	    //alert("Last if");	
+       		document.getElementById(dragid).src="blank.gif";
+       		document.getElementById(midid).src="blank.gif";
+       		target.getElementsByTagName("img")[0].src="GoldArrow.png";
+       		//alert(target.innerHTML);
+       		e.preventDefault();
+       		}
+       		else
+       		{
+       		 //alert("Last else");	
+       		}
+       		
+       }		
+       else
+       {
+          
+	   }	   	
+	
+    }
+    function beforeDrop(target, e)
+    {
+    	//alert("BeforeDrop");
+    	//alert(target.getElementsByTagName("img")[0].src);
+    	var index=target.getElementsByTagName("img")[0].src.indexOf("blank.gif");
+    	//alert(index);
+       if(index>0)
+       {
+       		//alert("If ke andhar");
+       		var dragid = e.dataTransfer.getData('Text');
+       		var dragX=getX(dragid);
+       		var dragY=getY(dragid);
+       		var dropX=getX(target.id);
+       		var dropY=getY(target.id);
+       		var difX=dragX-dropX;
+       		var difY=dragY-dropY;
+       		//alert("difX"+difX);
+       		//alert("difY"+difY);
+       			if((difX==2||difX==-2)&&dragY==dropY)
+       		{
+       			
+       			//alert("Before drop x  andhar");
+       			DropHandler(target,e,dragX,dropX,dragY,"x");
+	   		
+       		}
+       		else if((difY==2||difY==-2)&&dragX==dropX)
+       		
+       		{
+       				//alert("Before drop y  andhar");
+       				DropHandler(target,e,dragY,dropY,dragX,"y");
+	   			
+       		}
+       		else
+       		{
+       			//alert("Kuch bhi nahi");
+       		}
+	   }
+	   else
+	   {
+	   		//alert("Kuch bhi nahi");
+	   }
+	   
+    }
+     function GetImageMarble(divId, imgId, altValue)
+    {
+        
+        var imgTag = "<td align='center' valign='middle'>"+"<div "+" ondrop='beforeDrop(this, event)' ondragenter='return false' ondragover='return false' droppable='true' ";
+        imgTag = imgTag + divId;
+        imgTag = imgTag + "><img ";
+        //imgTag = imgTag + altValue + imgId+" ondrag='DragHandler(this, event)' ondragstart='check(this, event)'";
+        imgTag = imgTag + altValue + imgId+" ondragstart='check(this, event)'";
+        imgTag = imgTag + " src='";
+        imgTag = imgTag + "GoldArrow.png'";
+        imgTag = imgTag + " class=\"marble\"></div></td>";
+        return imgTag;
+    }
+
+    /// Gets an empty table column
+    function GetEmptyMarble(divId,imgId)
+    {
+              
+        return "<td>"+"<div "+ " ondrop='beforeDrop(this, event)' ondragenter='return false' ondragover='return false' droppable='true' "+  divId + "><img src='blank.gif' ondragstart='check(this, event)' class='marble' "+imgId+"/></div></td>";
+    }
+    </script>
+    <script>
+    function drawboard()
+    {   
+   		 var gameBoard = "<table border='1' cellspacing='3' cellpadding='2'>";
+			for(var rows = 0; rows < 9; rows++)
+		{
+    			gameBoard+= "<tr>";
+   			 	for(var cols = 0; cols < 9; cols++)
+    		{
+       			 var imgId = " id = 'i" + cols + rows + "' ";
+        		 var divId = " id = 'd" + cols + rows + "' ";
+        		 var altValue = " alt = 'i" + cols + rows + "' ";
+       				 if(rows < 4 && cols > 2 && cols < 6)
+       		 	{
+            		gameBoard+= GetImageMarble(divId, imgId, altValue);
+        		}
+        			else if(rows > 2 && rows < 6)
+        		{
+            // the center marble
+            				if(rows == 4 && cols == 4)
+            			{
+                			gameBoard+= GetEmptyMarble(divId,imgId);
+               
+            			}
+           					 else
+            			{
+            	    		gameBoard+= GetImageMarble(divId, imgId, altValue);
+            			}
+        		}
+        			else if(rows > 5 && cols > 2 && cols < 6)
+        		{
+            			gameBoard+= GetImageMarble(divId, imgId, altValue);
+        		}
+        			else
+        		{
+            // other non usable marble slots on the board
+           		 gameBoard+= "<td></td>";
+                  
+        		}
+         
+    }
+       gameBoard+= "</tr>";
+
+}
+ 
+gameBoard += "</table>";
+  document.getElementById("tab").innerHTML=gameBoard;
+ 
+}
+
+ function drawboard2()
+    {   
+   		 var gameBoard = "<table border='1' cellspacing='3' cellpadding='2' style='text-align:center;'>";
+			for(var rows = 0; rows < 7; rows++)
+		{
+    			gameBoard+= "<tr>";
+   			 	for(var cols = 0; cols < 7; cols++)
+    		{
+       			 var imgId = " id = 'i" + cols + rows + "' ";
+        		 var divId = " id = 'd" + cols + rows + "' ";
+        		 var altValue = " alt = 'i" + cols + rows + "' ";
+       				 if(rows < 3 && cols > 1 && cols < 5)
+       		 	{
+            		gameBoard+= GetImageMarble(divId, imgId, altValue);
+        		}
+        			else if(rows > 1 && rows < 5)
+        		{
+            // the center marble
+            				if(rows == 3 && cols == 3)
+            			{
+                			gameBoard+= GetEmptyMarble(divId,imgId);
+               
+            			}
+           					 else
+            			{
+            	    		gameBoard+= GetImageMarble(divId, imgId, altValue);
+            			}
+        		}
+        			else if(rows > 4 && cols > 1 && cols < 5)
+        		{
+            			gameBoard+= GetImageMarble(divId, imgId, altValue);
+        		}
+        			else
+        		{
+            // other non usable marble slots on the board
+           		 gameBoard+= "<td></td>";
+                  
+        		}
+         
+    }
+       gameBoard+= "</tr>";
+
+}
+ 
+gameBoard += "</table>";
+  document.getElementById("tab").innerHTML=gameBoard;
+ 
+}
+
+    </script>
+    <style>
+    img
+    {
+	cursor:pointer;
+	
+}
+    td div
+    {
+	border:3px silver groove;
+}
+.marble { width: 48px; height: 48px; border: 0px;position:inherit; top:0px; left:0px}
+.marbleHover { width: 40px;height:40px; border:2px; border-color:red}
+.divclass {border: 1px solid blue; width: 50px;height:50px; text-align:center;}
+.board-state-Hover {border: 2px solid red; width: 50px;height:50px;}
+.board-state-Active {border: 1px solid green; width: 50px;height:50px;}
+.style1 {
+	text-align: right;
+}
+#tab
+{
+	text-align:center;
+}
+
+</style>
+    
+</head>
+<body>
+<div class="style1">
+    <header>
+      
+       Let's Play
+       <div>
+
+<img src="small.png" onclick="drawboard2();" height="100" width="100"/>
+<img src="big.png" onclick="drawboard();" height="100" width="100"/>
+<img src="arrow.gif" height="20" width="20"/>
+
+Select a Board
+</div>
+
+    </header>
+<div id="tab">
+<script>
+//drawboard2();
+
+//drawboard();
+</script>
+</div>
+
+</div>
+<footer style="margin-top:30px;">
+Game developed by Paskanti.
+</footer>
+
+</body>
+</html>
